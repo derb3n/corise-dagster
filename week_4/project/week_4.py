@@ -1,5 +1,5 @@
 from typing import List
-
+import datetime
 from dagster import asset, with_resources
 from project.resources import redis_resource, s3_resource
 from project.types import Aggregation, Stock
@@ -33,7 +33,7 @@ def process_data(get_s3_data: List[Stock]) -> Aggregation:
     description="Store the highest value stock."
 )
 def put_redis_data(context,process_data: Aggregation):
-    agg_date = dt.strftime(process_data.date, '%m/%d/%Y')
+    agg_date = datetime.strftime(process_data.date, '%m/%d/%Y')
     agg_high = str(process_data.high)
     context.resources.redis.put_data(agg_date, agg_high)
     logger.info(f"Date: {agg_date} with daily high of ${agg_high} stored on Redis")
